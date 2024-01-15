@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="10;url=/redirect-target">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmed</title>
+</head>
+<body>
+    <div style="text-align: center; padding: 50px;">
+        <h2>Registration Confirmed!</h2>
+        <p>Thank you for registering.</p>
+        <p>If you are not redirected, <a href="/efms">click here</a>.</p>
+    </div>
+
+    <script>
+        // Add a click event listener to the link
+        document.querySelector('a').addEventListener('click', function(event) {
+            // Prevent the automatic redirection if the link is clicked
+            event.preventDefault();
+            // Manually navigate to the target URL
+            window.location.href = this.getAttribute('href');
+        });
+    </script>
+</body>
+</html>

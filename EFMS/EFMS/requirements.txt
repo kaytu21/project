@@ -1,0 +1,16 @@
+statsmodels
+flask
+matplotlib
+scikit-learn
+scipy
+numpy
+pandas
+pmdarima
+Flask-Login
+Flask-WTF
+Flask-Principal
+Flask-Bcrypt
+Flask-SQLAlchemy
+Flask-Session
+Werkzeug==2.3.0
+pymysql

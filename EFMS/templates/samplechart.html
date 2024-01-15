@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #chartContainer {
+            width: 80%;
+            margin: auto;
+            overflow-x: auto;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div id="chartContainer">
+    <canvas id="lineChart" width="600" height="300"></canvas>
+</div>
+
+<script>
+    // Sample data
+    const data = {
+        labels: Array.from({ length: 100 }, (_, i) => i),
+        datasets: [{
+            label: 'Sample Data',
+            data: Array.from({ length: 100 }, (_, i) => Math.sin(i)),
+            borderColor: 'blue',
+            borderWidth: 2,
+            fill: false
+        }]
+    };
+
+    // Chart options
+    const options = {
+        scales: {
+            x: {
+                type: 'linear',
+                position: 'bottom',
+                ticks: {
+                    stepSize: 30, // Display 30 samples at a time
+                }
+            },
+            y: {
+                type: 'linear',
+                position: 'left'
+            }
+        }
+    };
+
+    // Create the initial chart
+    const ctx = document.getElementById('lineChart').getContext('2d');
+    const lineChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: options
+    });
+
+    // Update chart size based on the window width
+    window.addEventListener('resize', () => {
+        const containerWidth = document.getElementById('chartContainer').offsetWidth;
+        lineChart.canvas.style.width = containerWidth + 'px';
+        lineChart.canvas.style.height = (containerWidth / 2) + 'px';
+        lineChart.resize();
+    });
+
+    // Set the initial size
+    window.dispatchEvent(new Event('resize'));
+</script>
+
+</body>
+</html>

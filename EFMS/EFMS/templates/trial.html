@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flood Level Status</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            justify-items: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .panel {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 500px;
+        }
+
+        .nested-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
+  </style>
+</head>
+<body>
+    <h1>Current Flood Level Status</h1>
+    
+    <div class="grid-container">
+      <div class="panel" style="width: 600px;">
+          <canvas id="floodChart"></canvas>
+      </div>
+
+      <div class="nested-grid">
+          <div class="panel" style="height: 400px;">
+              <canvas id="timeSeriesChart"></canvas>
+          </div>
+          <div class="panel" style="height: 400px;">
+            <label for="yearSelector">Select Year:</label>
+            <select id="yearSelector">
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+            </select>
+              <canvas id="pastmonthCharts"></canvas>
+          </div>
+      </div>
+    </div>
+  
+
+
+    <script src="/static/efms-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>Dashboard</title>
+
+    <!-- Add Google Charts library -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="./static/efms-dashboard.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            overflow-y: scroll; 
+        }
+
+        /* Header styles */
+        header {
+           
+           background-color: #00A885;
+           color: white;
+           text-align: center;
+           padding: 10px 0;
+           width: 100%;
+           overflow: hidden;
+           height: 200px;
+       } 
+       .background-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('./static/bkg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.5;
+            z-index: 0;
+        }
+       h1 {
+           font-weight: bold;
+           background-image: linear-gradient(to right, #553c9a 45%, #ee4b2b);
+           color: transparent;
+           background-clip: text;
+           -webkit-background-clip: text;
+           text-align: center;
+       }
+
+        /* Container for sidebar and content */
+        .container {
+            display: block;
+            width: 100%;
+            background-color: white;
+            
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #97C7ED;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            position: fixed;
+            top: 0;
+            left: -250px; 
+            height: 100%;
+            overflow-y: auto;
+            padding-top: 20px;
+            transition: left 0.3s ease-in-out;
+        }
+
+        /* Show the sidebar when the 'show' class is added */
+        .sidebar.show {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 20px; 
+            text-decoration: none;
+            color: black;
+            transition: background-color 0.3s ease;
+            font-size: 15px;
+            justify-content: center; 
+        }
+
+        .sidebar a:hover {
+            background-color: #555;
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+            font-size: 24px; 
+        }
+
+        /* Button to open/close the sidebar */
+        .open-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 24px;
+        }
+
+        /* Content area styles */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 2000px;
+            background-color: white;
+            padding: 20px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+            margin-bottom: 30px;
+            margin-top: 30px;
+            display: flex; 
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Style for the chart itself */
+        #chart_div {
+            flex-grow: 1; 
+            height: 450px; 
+           
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Legend styles */
+        .legend {
+            width: 200px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-top: 90px;
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+           
+            margin-right: 10px;
+            border: 1px solid #888;
+        }
+
+        /* Define different colors for the legend items */
+        .legend-item.item1 .legend-color { background-color: #0000FF; }
+        .legend-item.item2 .legend-color { background-color: #00ff00; }
+        .legend-item.item3 .legend-color { background-color: #ff0000; }
+    
+
+        .legend-text {
+            font-size: 14px;
+        }
+        .title{
+            font-weight: bold;
+            font-size: 40px;
+            text-align: center;
+            padding-top: 20px;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            justify-items: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .panel {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 600px;
+        }
+        .panel1 {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 700px;
+            height: 500px;
+        }
+
+        .nested-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        #myModal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding-top: 60px;
+        }
+
+        #modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 40%;
+            text-align: center; /* Center the content */
+        }
+
+        /* Style for the close button */
+        #closeBtn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        #closeBtn:hover,
+        #closeBtn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Style for the alert message */
+        #alertMessage {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    
+    
+    <header style="position: relative;">
+        <div class="background-layer"></div>
+        <div style="display: flex; justify-content: flex-end; align-items: center; text-align: right; margin-top: 50px; position: relative; z-index: 1;">
+            <img src="./static/logo.png" alt="Logo" width="100">
+            <div style="margin-right: 20px; text-align: right; color: white;">
+                <h1 style="margin-bottom: 10px; color: whitesmoke; font-weight: bold;">Early Flood Monitoring System</h1>
+                <h3 style="margin-bottom: 10px;">Current Flood Level Status</h3>
+            </div>
+        </div>
+    </header>
+    
+
+    <!-- Container for sidebar and content -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <a href="/efms-dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/efms-reports"><i class="fas fa-info-circle"></i> Reports</a>
+            <a href="./efms-add-phone"><i class="fas fa-plus"></i> Phone Numbers</a>
+            <a href="./efms"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <!-- Button to open/close the sidebar -->
+        <div class="open-btn" id="open-btn">
+            <span style="color: white; font-size: 30px;">&#9776;</span>
+        </div>
+
+        <!-- Content area -->
+        
+    
+    <div class="grid-container">
+        <div class="nested-grid">
+            <div class="panel1" style="width: 670px;">
+                <canvas id="floodChart"></canvas>
+            </div>
+            <div class="panel" style="width: 670px; height: 500px; overflow-x: auto;">
+                <canvas id="timeSeriesChart" width="1200"></canvas>
+            </div>
+        </div>
+      
+
+     
+          
+          <div class="panel" style="height: 600px; width: 90%;">
+            <label for="yearSelector">Select Year:</label>
+            <select id="yearSelector">
+                {% for year in years %}
+                 <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+              <canvas id="pastmonthCharts"></canvas>
+          </div>
+      
+    </div>
+        
+    </div>
+    <footer>
+        <p>&copy; 2023 BSIT - 4A</p>
+    </footer>
+    <script>
+        var sidebar = document.getElementById('sidebar');
+        var openBtn = document.getElementById('open-btn');
+        var container = document.querySelector('.container');
+    
+            // Function to open the sidebar
+            function openSidebar() {
+                sidebar.classList.add('show');
+            }
+    
+            // Function to close the sidebar
+            function closeSidebar() {
+                sidebar.classList.remove('show');
+            }
+    
+            // Toggle the sidebar when the open button is clicked
+            openBtn.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent the click from closing the sidebar immediately
+                toggleSidebar();
+            });
+    
+            // Close the sidebar if a click event occurs outside the sidebar or container
+            document.addEventListener('click', function(event) {
+                if (sidebar.classList.contains('show') && !sidebar.contains(event.target) && event.target !== openBtn) {
+                    closeSidebar();
+                }
+            });
+    
+            // Prevent clicks inside the sidebar from closing it
+            sidebar.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+    
+            // Prevent clicks inside the container from closing it
+            container.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+    
+            // Function to toggle the sidebar
+            function toggleSidebar() {
+                if (sidebar.classList.contains('show')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            }
+    
+            // Initialize the sidebar as closed
+            closeSidebar();
+            // Function to close the modal
+            function closeModal() {
+                document.getElementById('myModal').style.display = 'none';
+            }
+        </script>
+        <div id="myModal">
+            <div id="modal-content">
+                <span id="closeBtn" onclick="closeModal()">&times;</span>
+                <i class="material-icons" style="font-size:100px;color:red;margin-bottom: 10px;">error_outline</i>
+                <h2 style="font-size: 40px;">Flood Alert!</h2>
+                
+                <p id="alertMessage"></p>
+            </div>
+        </div>
+</body>
+</html>
